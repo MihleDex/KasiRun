@@ -1,0 +1,3 @@
+/home/xanthias/Projects/KasiRun/build/CMakeFiles/krun.dir
+/home/xanthias/Projects/KasiRun/build/CMakeFiles/edit_cache.dir
+/home/xanthias/Projects/KasiRun/build/CMakeFiles/rebuild_cache.dir
