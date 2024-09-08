@@ -8,6 +8,7 @@ class PlayerAnimation {
         Texture2D texture;
         int frameWidth;
         int frames;
+        int playerSpeed;
         int frameHeight;
         int currentFrame;
         float frameTime;
@@ -15,7 +16,7 @@ class PlayerAnimation {
         Rectangle frameRec;
         Vector2 position;
 
-        PlayerAnimation(const char* image_path, int frames)
+        PlayerAnimation(const char* image_path, int frames, int animSpeed)
         {
             this->animation = LoadImage(image_path);
             this->texture = LoadTextureFromImage(this->animation);
@@ -23,10 +24,11 @@ class PlayerAnimation {
             this->frames = frames;
             this->frameHeight = this->texture.height;
             this->currentFrame = 0;
-            this->frameTime = 0.1f;
+            this->frameTime = 1.0f / animSpeed;
             this->timer = 0.0f;
             this->frameRec = { 0.0f, 0.0f, (float)this->frameWidth, (float)this->frameHeight };
-            this->position = { 400.0f, 300.0f };
+            this->position = { 100.0f, 300.0f };
+            this->playerSpeed = 1;
 
             if(this->texture.id ==0){
                 cout << "Failed to load texture.";
@@ -65,56 +67,67 @@ class PlayerAnimation {
 
 int main() {
     // Initialization
-    //--------------------------------------------------------------------------------------
     const int screenWidth = 800;
     const int screenHeight = 450;
     InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
 
     //PLAYER WALKING ANIMATION
-    PlayerAnimation player_walking("../textures/City_men_2/Walk.png", 10);
+    PlayerAnimation player_walking("../textures/City_men_2/Walk.png", 10,15);
 
     //PLAYER IDLE ANIMATION
-    Texture2D player_idle = LoadTexture("../textures/City_men_2/Idle.png");
+    PlayerAnimation player_idle = PlayerAnimation("../textures/City_men_2/Idle.png", 6,10);
 
     //PLAYER RUNNING ANIMATION
-    Texture2D player_running = LoadTexture("../textures/City_men_2/Run.png");
+    PlayerAnimation player_running = PlayerAnimation("../textures/City_men_2/Run.png", 10,35);
 
+
+    //Current player animation
+    PlayerAnimation currentAnimation = player_idle;
  
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
-    //--------------------------------------------------------------------------------------
+    SetTargetFPS(60);         
+
 
     // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
+    while (!WindowShouldClose())    
     {
-        // Update
-        //----------------------------------------------------------------------------------
-        // TODO: Update your variables here
-        //----------------------------------------------------------------------------------
-        player_walking.update();
+        
+       currentAnimation.update();
+
+        if (IsKeyDown(KEY_LEFT_SHIFT)) {
+        player_running.position.x = currentAnimation.position.x;
+        player_running.position.x += player_running.playerSpeed * 8;  // Move player to the right at double speed
+        currentAnimation = player_running;
+        player_running.update();
+        }
+        else if (IsKeyDown(KEY_RIGHT)) {
+            player_walking.position.x = currentAnimation.position.x;
+            player_walking.position.x += player_walking.playerSpeed;  // Move player to the right at normal speed
+            currentAnimation = player_walking;
+            player_walking.update();
+        }
+        else {
+            player_idle.position.x = currentAnimation.position.x;
+            currentAnimation = player_idle;
+            player_idle.update();
+        }
     
         // Draw
-        //----------------------------------------------------------------------------------
         BeginDrawing();
 
             ClearBackground(RAYWHITE);
 
-           
-            //PLAYER WALKING ANIMATION
-            player_walking.draw();
+            
+            currentAnimation.draw();
 
         EndDrawing();
-        //----------------------------------------------------------------------------------
     }
 
-    // De-Initialization
     player_walking.unload();
-    UnloadTexture(player_idle);
-    UnloadTexture(player_running);
+    player_idle.unload();
+    player_running.unload();
 
-    //--------------------------------------------------------------------------------------
-    CloseWindow();        // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
-
+    CloseWindow();       
+ 
     return 0;
 }
 

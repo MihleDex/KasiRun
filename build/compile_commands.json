@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/xanthias/Projects/KasiRun/build",
+  "command": "/usr/bin/g++   -g -std=gnu++11 -I/usr/local/include -o CMakeFiles/krun.dir/main.cpp.o -c /home/xanthias/Projects/KasiRun/main.cpp",
+  "file": "/home/xanthias/Projects/KasiRun/main.cpp",
+  "output": "CMakeFiles/krun.dir/main.cpp.o"
+}
+]
